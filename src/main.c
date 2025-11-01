@@ -20,20 +20,21 @@ typedef enum {
 typedef struct {
         EntityKind kind;
         Vector2 position;
+        Vector2 velocity;
         int width;
         int height;
 } Entity;
 
 typedef struct {
-        Entity* entity;
+        Entity entity;
 } Paddle;
 
 typedef struct {
-        Entity* entity;
+        Entity entity;
 } Invader;
 
 typedef struct {
-        Entity* entity;
+        Entity entity;
 } Bullet;
 
 //------------------------------------------------------------------------------------
@@ -41,6 +42,9 @@ typedef struct {
 //------------------------------------------------------------------------------------
 #define MAX_INVADERS 128
 #define MAX_BULLETS 128
+
+#define PADDLE_HEIGHT 32
+#define PADDLE_WIDTH 128
 
 static Invader* live_invader[MAX_INVADERS];
 static Bullet* live_bullet[MAX_BULLETS];
@@ -55,12 +59,12 @@ static Paddle* paddle_create() {
         if (!paddle)
                 return NULL;
 
-        Rectangle paddle_rect = (Rectangle) {
-                paddle->entity->position.x,
-                paddle->entity->position.y,
-                paddle->entity->width,
-                paddle->entity->height
-        };
+        paddle->entity.position.x = 0;
+        paddle->entity.position.y = 400;
+        paddle->entity.velocity.x = 0;
+        paddle->entity.velocity.y = 0;
+        paddle->entity.width = PADDLE_WIDTH;
+        paddle->entity.height = PADDLE_HEIGHT;
 
         return paddle;
 }
@@ -72,28 +76,38 @@ static void paddle_destroy(Paddle* paddle) {
         free(paddle);
 }
 
-static void paddle_handle_input(const Paddle* paddle) {
+static void paddle_handle_input(Paddle* paddle) {
         if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
         }
 
         if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
+                paddle->entity.velocity.x = -3.0f;
         }
 
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
+                paddle->entity.velocity.x = 3.0f;
         }
 }
 
-static void paddle_update(const Paddle* paddle) {
-        k
+static void paddle_update(Paddle* paddle) {
+        paddle->entity.velocity.x = 0;
+
+        paddle_handle_input(paddle);
+
+        float next_pos_x += paddle->entity.velocity.x;
+
+        paddle->entity.position.x += paddle->entity.velocity.x;
 }
 
 static void paddle_draw(const Paddle* paddle) {
         Rectangle paddle_rect = (Rectangle) {
-                paddle->entity->position.x,
-                paddle->entity->position.y,
-                paddle->entity->width,
-                paddle->entity->height
+                paddle->entity.position.x,
+                paddle->entity.position.y,
+                paddle->entity.width,
+                paddle->entity.height
         };
+        
+        DrawRectangleRec(paddle_rect, RED);
 }
 
 //------------------------------------------------------------------------------------
@@ -129,8 +143,6 @@ int main(void)
 
                 paddle_draw(paddle);
 
-                DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
                 EndDrawing();
                 //----------------------------------------------------------------------------------
         }
@@ -139,6 +151,8 @@ int main(void)
         //--------------------------------------------------------------------------------------
         CloseWindow();        // Close window and OpenGL context
         //--------------------------------------------------------------------------------------
+        
+        paddle_destroy(paddle);
 
         return 0;
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/cc",
+      "-Wall",
+      "-Wextra",
+      "-std=c99",
+      "-I/opt/homebrew/opt/raylib/include",
+      "-Isrc",
+      "-Isrc/game",
+      "-c",
+      "-o",
+      "obj/game/inventory.o",
+      "src/game/inventory.c"
+    ],
+    "directory": "/Users/bpeckruhn/Code/private/unnamed-game",
+    "file": "/Users/bpeckruhn/Code/private/unnamed-game/src/game/inventory.c",
+    "output": "/Users/bpeckruhn/Code/private/unnamed-game/obj/game/inventory.o"
+  }
+]
